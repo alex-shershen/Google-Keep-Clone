@@ -1,5 +1,7 @@
 package com.example.googlekeepclone;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -14,13 +16,34 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.util.UUID;
+
 public class MainActivity extends SingleFragmentActivity {
 
+
+    private static final int REQUEST_NOTE = 1;
+    private static final String EXTRA_NOTE_ID =
+            "com.example.googlekeepclone.android.noteintent.crime_id";
     @Override
     protected Fragment createFragment() {
-        return new NoteListFragment();
+        UUID noteId = (UUID) getIntent()
+            .getSerializableExtra(EXTRA_NOTE_ID);
+        return EditorFragment.newInstance(noteId);
     }
 
+
+    public static Intent newIntent(Context packageContext, UUID noteId) {
+        Intent intent = new Intent(packageContext, MainActivity.class);
+        intent.putExtra(EXTRA_NOTE_ID, noteId);
+        return intent;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_NOTE) {
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -13,7 +13,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import java.util.List;
+import java.util.UUID;
+
 public class EditorFragment extends Fragment {
+    private static final String ARG_NOTE_ID = "note_id";
     private  Note mNote;
     private EditText headEditText;
     private EditText textEditText;
@@ -21,7 +25,16 @@ public class EditorFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mNote = new Note("Head", "Text", "Color");
+        UUID noteId = (UUID) getArguments().getSerializable(ARG_NOTE_ID);
+        mNote = NoteLab.get(getActivity()).getNote(noteId);
+    }
+
+    public static EditorFragment newInstance(UUID crimeId) {
+        Bundle args = new Bundle();
+        args.putSerializable(ARG_NOTE_ID, crimeId);
+        EditorFragment fragment = new EditorFragment();
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Nullable
@@ -31,6 +44,9 @@ public class EditorFragment extends Fragment {
         headEditText = view.findViewById(R.id.headEditText);
         textEditText = view.findViewById(R.id.textEditText);
         backButton= view.findViewById(R.id.backButton);
+
+        headEditText.setText(mNote.getHead());
+        textEditText.setText(mNote.getText());
         headEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -62,4 +78,5 @@ public class EditorFragment extends Fragment {
 
         return view;
     }
+
 }

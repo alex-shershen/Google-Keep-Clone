@@ -1,5 +1,6 @@
 package com.example.googlekeepclone;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,12 +30,6 @@ public class NoteListFragment extends Fragment {
         updateUI();
         return view;
     }
-    private void updateUI() {
-        NoteLab crimeLab = NoteLab.get(getActivity());
-        List<Note> crimes = crimeLab.getNotes();
-        mAdapter = new NoteAdapter(crimes);
-        mNoteRecyclerView.setAdapter(mAdapter);
-    }
     private class NoteHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener{
         private Note mNote;
@@ -57,6 +52,8 @@ public class NoteListFragment extends Fragment {
             Toast.makeText(getActivity(),
                     mNote.getHead() + " clicked!", Toast.LENGTH_SHORT)
                     .show();
+            Intent intent = MainActivity.newIntent(getActivity(), mNote.getId());
+            startActivity(intent);
         }
     }
     private class NoteAdapter extends RecyclerView.Adapter<NoteHolder> {
@@ -79,6 +76,21 @@ public class NoteListFragment extends Fragment {
         @Override
         public int getItemCount() {
             return mNotes.size();
+        }
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateUI();
+    }
+    private void updateUI() {
+        NoteLab crimeLab = NoteLab.get(getActivity());
+        List<Note> crimes = crimeLab.getNotes();
+        if (mAdapter == null) {
+            mAdapter = new NoteAdapter(crimes);
+            mNoteRecyclerView.setAdapter(mAdapter);
+        } else {
+            mAdapter.notifyDataSetChanged();
         }
     }
 }
